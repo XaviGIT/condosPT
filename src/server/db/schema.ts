@@ -101,9 +101,9 @@ export const buildings = createTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }),
-    createdById: varchar("createdById", { length: 255 })
-      .notNull()
-      .references(() => users.id),
+    // createdById: varchar("createdById", { length: 255 })
+    //   .notNull()
+    //   .references(() => users.id),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -111,9 +111,9 @@ export const buildings = createTable(
     floors: integer("floors"),
     fractions: integer("fractions"),
   },
-  (building) => ({
-    creatorIdx: index("creator_idx").on(building.createdById)
-  })
+  // (building) => ({
+  //   creatorIdx: index("creator_idx").on(building.createdById)
+  // })
 )
 
 export const residents = createTable(

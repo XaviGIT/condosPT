@@ -1,4 +1,3 @@
-import { type Session } from "next-auth";
 import { type AppType } from "next/app";
 import { Inter } from "next/font/google";
 
@@ -12,9 +11,9 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps,
 }) => {
   return (    
     <ClerkProvider {...pageProps}>
