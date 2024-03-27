@@ -100,7 +100,7 @@ export const buildings = createTable(
   "building",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 255 }),
+    name: varchar("name", { length: 255 }).notNull().default("Novo condomínio"),
     // createdById: varchar("createdById", { length: 255 })
     //   .notNull()
     //   .references(() => users.id),
@@ -108,8 +108,8 @@ export const buildings = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt"),
-    floors: integer("floors"),
-    fractions: integer("fractions"),
+    floors: integer("floors").notNull().default(1),
+    fractions: integer("fractions").notNull().default(1),
   },
   // (building) => ({
   //   creatorIdx: index("creator_idx").on(building.createdById)
@@ -119,7 +119,59 @@ export const buildings = createTable(
 export const residents = createTable(
   "resident", {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 255 }),
-
+    name: varchar("name", { length: 255 }).notNull().default("Desconhecido"),
+    contact: varchar("contact", { length: 15 }),
+    floor: integer("floor").notNull(),
+    fraction: integer("fraction").notNull()
   }
 )
+
+export const payments = createTable(
+  "payment", {
+    id: serial("id").primaryKey(),
+    ammount: integer("ammount").notNull().default(0),
+    month: varchar("month", { length: 7 }).notNull(),
+    description: varchar("description", { length: 255 })
+  }
+)
+
+export const expenses = createTable(
+  "expense", {
+    id: serial("id").primaryKey(),
+    ammount: integer("ammount").notNull().default(0),
+    month: varchar("month", { length: 7 }).notNull(),
+    description: varchar("description", { length: 255 })
+  }
+)
+
+export const residentRelations = relations(residents, ( { one, many }) => ({
+  building: one(buildings, {
+    fields: [residents.id],
+    references: [buildings.id]
+  }),
+  payments: many(payments)
+}))
+
+export const buildingRelations = relations(buildings, ({ many }) => ({
+  residents: many(residents),
+  payments: many(payments),
+  expenses: many(expenses)
+}))
+
+export const paymentRelations = relations(payments, ({one}) => ({
+  resident: one(residents, {
+    fields: [payments.id],
+    references: [residents.id]
+  }),
+  building: one(buildings, {
+    fields: [payments.id],
+    references: [buildings.id]
+  })
+}))
+
+export const expenseRelations = relations(expenses, ({one}) => ({  
+  building: one(buildings, {
+    fields: [expenses.id],
+    references: [buildings.id]
+  })
+}))
